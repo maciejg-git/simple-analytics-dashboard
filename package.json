@@ -1,0 +1,21 @@
+{
+  "name": "simple-analytics-dashboard",
+  "version": "1.0.0",
+  "description": "",
+  "main": "simple-analytics-dashboard.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npx @11ty/eleventy-dev-server",
+    "tailwind": "npx @tailwindcss/cli -i ./input.css -o ./output.css --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@11ty/eleventy-dev-server": "^2.0.8",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.11",
+    "tailwindcss": "^4.1.11"
+  }
+}

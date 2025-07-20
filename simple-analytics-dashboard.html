@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <link href="./output.css" rel="stylesheet">
+    <!-- fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <!-- supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- chartjs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- alpine store -->
+    <script src="/store-table.js"></script>
+    <!-- alpine components -->
+    <script src="/alpine-dashboard.js"></script>
+    <script src="/alpine-chart.js"></script>
+    <!-- litewind alpine -->
+    <script defer src="https://cdn.jsdelivr.net/npm/litewind-alpine@0.x.x/plugins/use-floating/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/litewind-alpine@0.x.x/components/dropdown/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/litewind-alpine@0.x.x/components/datepicker/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/litewind-alpine@0.x.x/components/table/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js" integrity="sha384-Akqfrbj/HpNVo8k11SXBb6TlBWmXXlYQrCSqEWmyKJe+hDm3Z/B2WVG4smwBkRVm" crossorigin="anonymous"></script>
+    <!-- alpine -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  </head>
+  <body>
+    <nav class="w-full sticky top-0 bg-white border-b border-gray-200 z-10 py-2 pl-4">
+      <span class="text-lg font-semibold">
+        Simple Analytics Dashboard
+      </span>
+    </nav>
+    <div x-data="dashboard">
+      <!-- container -->
+      <div class="flex">
+        <!-- left column -->
+        <div class="px-10 border-r border-gray-200 min-h-screen flex flex-col gap-y-4">
+          <ul>
+            <template x-for="item in uniqueHostnames">
+              <li>
+                <span x-text="item.hostname" @click="currentHostname = item.hostname"></span>
+              </li>
+            </template>
+          </ul>
+          <div x-data="dropdown" data-auto-close="false">
+            <button
+              x-bind="trigger"
+            >
+              Date range
+            </button>
+            <div
+              x-bind="menu"
+              x-cloak
+              x-alt-transition='{
+                "enter": ["opacity-0 scale-y-50", "transition ease-out duration-100 origin-top", "opacity-100"],
+                "leave": ["opacity-100", "transition ease-in duration-100 origin-top", "opacity-0 scale-y-50"]
+              }'
+              class="z-50"
+            >
+              <div
+                x-data="datepicker"
+                data-range
+                x-model="currentDateRange"
+                class="w-[320px] overflow-hidden rounded-md border border-dark-300 bg-white text-center text-text-800 shadow-md dark:border-dark-700 dark:bg-dark-800 dark:text-text-300 mx-auto"
+              >
+                <div class="my-4 grid grid-flow-col grid-cols-6">
+                  <button
+                    x-bind="prevYearButton"
+                    class="mx-auto flex flex-col justify-center rounded-sm px-2 py-1 leading-none focus:outline-hidden focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-400"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      viewBox="0 0 16 16"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"
+                      />
+                      <path
+                        fill-rule="evenodd"
+                        d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    x-bind="prevMonthButton"
+                    class="mx-auto flex flex-col justify-center rounded-sm px-2 py-1 leading-none focus:outline-hidden focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-400"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      viewBox="0 0 16 16"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"
+                      />
+                    </svg>
+                  </button>
+                  <div
+                    x-text="currentDate"
+                    class="col-span-2 inline-block font-bold"
+                  ></div>
+                  <button
+                    x-bind="nextMonthButton"
+                    class="mx-auto flex flex-col justify-center rounded-sm px-2 py-1 leading-none focus:outline-hidden focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-400"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      viewBox="0 0 16 16"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    x-bind="nextYearButton"
+                    class="mx-auto flex flex-col justify-center rounded-sm px-2 py-1 leading-none focus:outline-hidden focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-400"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      viewBox="0 0 16 16"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708"
+                      />
+                      <path
+                        fill-rule="evenodd"
+                        d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <div class="mb-3 grid grid-cols-7 px-2">
+                  <template x-for="weekday in weekdays">
+                    <div
+                      x-text="weekday"
+                      class="text-sm font-semibold dark:text-text-300"
+                    ></div>
+                  </template>
+                </div>
+                <div class="relative mb-3 grid grid-cols-7 justify-items-center gap-2 px-2">
+                  <template x-for="d in days" :key="getDayKey()">
+                    <button
+                      x-bind="day"
+                      x-text="d.getDate()"
+                      class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full py-1 text-sm font-semibold"
+                      class-default="hover:bg-secondary-200 dark:hover:bg-dark-700"
+                      class-today="border border-primary-400 font-bold! text-primary-400 dark:text-primary-400"
+                      class-adjacent="text-text-800/20 dark:text-text-200/10"
+                      class-selected="bg-primary-400 text-white hover:bg-primary-600 dark:bg-primary-500 dark:text-text-200 dark:hover:bg-primary-700"
+                      class-selected-range="bg-primary-400 text-white hover:bg-primary-600 dark:bg-primary-500 dark:text-text-200 dark:hover:bg-primary-700"
+                      class-partially-selected="bg-secondary-300 text-text-800 dark:bg-dark-700 dark:text-text-300"
+                      class-disabled="text-text-800/20 dark:text-text-200/10 pointer-events-none"
+                    ></button>
+                  </template>
+                </div>
+                <div
+                  x-text="todayFormatted"
+                  class="bg-gray-100 py-1 text-sm font-semibold dark:bg-dark-700 dark:text-text-300"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- right column -->
+        <div class="flex flex-col gap-y-4 p-4">
+          <!-- hostname and boxes -->
+          <div class="flex flex-col gap-y-4 border-l-4 border-gray-200 pl-4">
+            <!-- current hostname -->
+            <div x-text="currentHostname" class="text-xl font-semibold"></div>
+            <!-- number boxes -->
+            <div class="flex gap-x-4">
+              <div
+                class="flex flex-col items-center rounded-md border border-gray-200 px-6 py-1"
+              >
+                <span x-text="viewCount" class="font-semibold"></span>
+                <span class="text-sm">Total visits</span>
+              </div>
+              <div
+                class="flex flex-col items-center rounded-md border border-gray-200 px-6 py-1"
+              >
+                <span x-text="mostViewedPathnames[0]?.pathname" class="font-semibold"></span>
+                <span class="text-sm">Most visited path</span>
+              </div>
+            </div>
+          </div>
+          <!-- charts -->
+          <div class="flex gap-x-4">
+            <!-- chart card -->
+            <div class="w-1/2 rounded-md border border-gray-200 shadow-md flex flex-col px-4 pb-4">
+              <!-- chart card header -->
+              <div class="flex items-center justify-between py-2">
+                <div class="font-semibold">Daily views</div>
+              </div>
+              <div x-data="chart" :data-labels="charts.dailyViews.labels" :data-items="charts.dailyViews.items" :data-options="charts.dailyViews.options" class="h-60">
+                <canvas></canvas>
+              </div>
+            </div>
+            <div class="w-1/2 rounded-md border border-gray-200 shadow-md flex flex-col px-4 pb-4">
+              <!-- chart card header -->
+              <div class="flex items-center justify-between py-2">
+                <div class="font-semibold">Daily views</div>
+              </div>
+              <div x-data="chart" :data-type="charts.mostViewedPathnames.type" :data-labels="charts.mostViewedPathnames.labels" :data-items="charts.mostViewedPathnames.items" :data-options="charts.mostViewedPathnames.options" class="h-60">
+                <canvas></canvas>
+              </div>
+            </div>
+          </div>
+          <div>
+            <table
+              x-data="table"
+              :data-items="viewData"
+              :data-definition="$store.table.definition"
+              data-primary-key="id"
+              class="w-full table-auto border-collapse text-left text-[0.85rem]"
+              class-loading="opacity-50 pointer-events-none"
+            >
+              <thead>
+                <tr>
+                  <template x-for="col in _definition">
+                    <td
+                      x-bind="header"
+                      class="border-b border-gray-300 px-2 py-2 font-semibold text-text-800 dark:border-dark-600 dark:text-text-300"
+                    >
+                      <div class="flex items-center">
+                        <span x-text="col.label"></span>
+                        <template x-if="isSortable() && !isSorted()">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 320 512"
+                            fill="currentColor"
+                            class="ml-3 h-4 w-4 opacity-30"
+                          >
+                            <path
+                              d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128zm0 429.3l-128-128c-9.2-9.2-11.9-22.9-6.9-34.9s16.6-19.8 29.6-19.8l256 0c12.9 0 24.6 7.8 29.6 19.8s2.2 25.7-6.9 34.9l-128 128c-12.5 12.5-32.8 12.5-45.3 0z"
+                            />
+                          </svg>
+                        </template>
+                        <template x-if="isSortedAsc()">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 320 512"
+                            fill="currentColor"
+                            class="ml-3 h-4 w-4 opacity-70"
+                          >
+                            <path
+                              d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z"
+                            />
+                          </svg>
+                        </template>
+                        <template x-if="isSortedDesc()">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 320 512"
+                            fill="currentColor"
+                            class="ml-3 h-4 w-4 opacity-70"
+                          >
+                            <path
+                              d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z"
+                            />
+                          </svg>
+                        </template>
+                      </div>
+                    </td>
+                  </template>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="row in getDataPaginated" :key="row[_primaryKey]">
+                  <tr>
+                    <template x-for="col in _definition">
+                      <td
+                        x-text="getCellContent"
+                        class="border-t border-gray-300 px-2 py-2 text-text-800 transition-colors duration-200 dark:border-dark-600 dark:text-text-300"
+                      ></td>
+                    </template>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
