@@ -37,168 +37,184 @@
       <!-- container -->
       <div class="flex">
         <!-- left column -->
-        <div class="px-10 border-r border-gray-200 min-h-screen flex flex-col gap-y-4">
-          <ul>
-            <template x-for="item in uniqueHostnames">
-              <li>
-                <span x-text="item.hostname" @click="currentHostname = item.hostname"></span>
-              </li>
-            </template>
-          </ul>
-          <div x-data="dropdown" data-auto-close="false">
-            <button
-              x-bind="trigger"
-            >
-              Date range
-            </button>
-            <div
-              x-bind="menu"
-              x-cloak
-              x-alt-transition='{
-                "enter": ["opacity-0 scale-y-50", "transition ease-out duration-100 origin-top", "opacity-100"],
-                "leave": ["opacity-100", "transition ease-in duration-100 origin-top", "opacity-0 scale-y-50"]
-              }'
-              class="z-50"
-            >
-              <div
-                x-data="datepicker"
-                data-range
-                x-model="currentDateRange"
-                class="w-[320px] overflow-hidden rounded-md border border-dark-300 bg-white text-center text-text-800 shadow-md dark:border-dark-700 dark:bg-dark-800 dark:text-text-300 mx-auto"
-              >
-                <div class="my-4 grid grid-flow-col grid-cols-6">
-                  <button
-                    x-bind="prevYearButton"
-                    class="mx-auto flex flex-col justify-center rounded-sm px-2 py-1 leading-none focus:outline-hidden focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-400"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"
-                      />
-                      <path
-                        fill-rule="evenodd"
-                        d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"
-                      />
-                    </svg>
-                  </button>
-                  <button
-                    x-bind="prevMonthButton"
-                    class="mx-auto flex flex-col justify-center rounded-sm px-2 py-1 leading-none focus:outline-hidden focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-400"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"
-                      />
-                    </svg>
-                  </button>
-                  <div
-                    x-text="currentDate"
-                    class="col-span-2 inline-block font-bold"
-                  ></div>
-                  <button
-                    x-bind="nextMonthButton"
-                    class="mx-auto flex flex-col justify-center rounded-sm px-2 py-1 leading-none focus:outline-hidden focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-400"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"
-                      />
-                    </svg>
-                  </button>
-                  <button
-                    x-bind="nextYearButton"
-                    class="mx-auto flex flex-col justify-center rounded-sm px-2 py-1 leading-none focus:outline-hidden focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-400"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708"
-                      />
-                      <path
-                        fill-rule="evenodd"
-                        d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708"
-                      />
-                    </svg>
-                  </button>
-                </div>
-                <div class="mb-3 grid grid-cols-7 px-2">
-                  <template x-for="weekday in weekdays">
-                    <div
-                      x-text="weekday"
-                      class="text-sm font-semibold dark:text-text-300"
-                    ></div>
-                  </template>
-                </div>
-                <div class="relative mb-3 grid grid-cols-7 justify-items-center gap-2 px-2">
-                  <template x-for="d in days" :key="getDayKey()">
-                    <button
-                      x-bind="day"
-                      x-text="d.getDate()"
-                      class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full py-1 text-sm font-semibold"
-                      class-default="hover:bg-secondary-200 dark:hover:bg-dark-700"
-                      class-today="border border-primary-400 font-bold! text-primary-400 dark:text-primary-400"
-                      class-adjacent="text-text-800/20 dark:text-text-200/10"
-                      class-selected="bg-primary-400 text-white hover:bg-primary-600 dark:bg-primary-500 dark:text-text-200 dark:hover:bg-primary-700"
-                      class-selected-range="bg-primary-400 text-white hover:bg-primary-600 dark:bg-primary-500 dark:text-text-200 dark:hover:bg-primary-700"
-                      class-partially-selected="bg-secondary-300 text-text-800 dark:bg-dark-700 dark:text-text-300"
-                      class-disabled="text-text-800/20 dark:text-text-200/10 pointer-events-none"
-                    ></button>
-                  </template>
-                </div>
-                <div
-                  x-text="todayFormatted"
-                  class="bg-gray-100 py-1 text-sm font-semibold dark:bg-dark-700 dark:text-text-300"
-                ></div>
-              </div>
-            </div>
+        <div class="px-10 border-r border-gray-200 min-h-screen flex flex-col gap-y-4 pt-4">
+          <div class="flex flex-col gap-y-2">
+            <span class="font-semibold">Hostname</span>
+            <ul>
+              <template x-for="item in uniqueHostnames">
+                <li>
+                  <span x-text="item.hostname" @click="currentHostname = item.hostname"></span>
+                </li>
+              </template>
+            </ul>
           </div>
+          <ul>
+            <li>
+              Today
+            </li>
+            <li>
+              This week
+            </li>
+            <li>
+              This month
+            </li>
+            <li>
+              <div x-data="dropdown" data-auto-close="false">
+                <button
+                  x-bind="trigger"
+                >
+                  Set date
+                </button>
+                <div
+                  x-bind="menu"
+                  x-cloak
+                  x-alt-transition='{
+                    "enter": ["opacity-0 scale-y-50", "transition ease-out duration-100 origin-top", "opacity-100"],
+                    "leave": ["opacity-100", "transition ease-in duration-100 origin-top", "opacity-0 scale-y-50"]
+                  }'
+                  class="z-50"
+                >
+                  <div
+                    x-data="datepicker"
+                    data-range
+                    x-model="currentDateRange"
+                    class="w-[320px] overflow-hidden rounded-md border border-dark-300 bg-white text-center text-text-800 shadow-md dark:border-dark-700 dark:bg-dark-800 dark:text-text-300 mx-auto"
+                  >
+                    <div class="my-4 grid grid-flow-col grid-cols-6">
+                      <button
+                        x-bind="prevYearButton"
+                        class="mx-auto flex flex-col justify-center rounded-sm px-2 py-1 leading-none focus:outline-hidden focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-400"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"
+                          />
+                          <path
+                            fill-rule="evenodd"
+                            d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        x-bind="prevMonthButton"
+                        class="mx-auto flex flex-col justify-center rounded-sm px-2 py-1 leading-none focus:outline-hidden focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-400"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"
+                          />
+                        </svg>
+                      </button>
+                      <div
+                        x-text="currentDate"
+                        class="col-span-2 inline-block font-bold"
+                      ></div>
+                      <button
+                        x-bind="nextMonthButton"
+                        class="mx-auto flex flex-col justify-center rounded-sm px-2 py-1 leading-none focus:outline-hidden focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-400"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        x-bind="nextYearButton"
+                        class="mx-auto flex flex-col justify-center rounded-sm px-2 py-1 leading-none focus:outline-hidden focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-400"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708"
+                          />
+                          <path
+                            fill-rule="evenodd"
+                            d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                    <div class="mb-3 grid grid-cols-7 px-2">
+                      <template x-for="weekday in weekdays">
+                        <div
+                          x-text="weekday"
+                          class="text-sm font-semibold dark:text-text-300"
+                        ></div>
+                      </template>
+                    </div>
+                    <div class="relative mb-3 grid grid-cols-7 justify-items-center gap-2 px-2">
+                      <template x-for="d in days" :key="getDayKey()">
+                        <button
+                          x-bind="day"
+                          x-text="d.getDate()"
+                          class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full py-1 text-sm font-semibold"
+                          class-default="hover:bg-secondary-200 dark:hover:bg-dark-700"
+                          class-today="border border-primary-400 font-bold! text-primary-400 dark:text-primary-400"
+                          class-adjacent="text-text-800/20 dark:text-text-200/10"
+                          class-selected="bg-primary-400 text-white hover:bg-primary-600 dark:bg-primary-500 dark:text-text-200 dark:hover:bg-primary-700"
+                          class-selected-range="bg-primary-400 text-white hover:bg-primary-600 dark:bg-primary-500 dark:text-text-200 dark:hover:bg-primary-700"
+                          class-partially-selected="bg-secondary-300 text-text-800 dark:bg-dark-700 dark:text-text-300"
+                          class-disabled="text-text-800/20 dark:text-text-200/10 pointer-events-none"
+                        ></button>
+                      </template>
+                    </div>
+                    <div
+                      x-text="todayFormatted"
+                      class="bg-gray-100 py-1 text-sm font-semibold dark:bg-dark-700 dark:text-text-300"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
         </div>
         <!-- right column -->
-        <div class="flex flex-col gap-y-4 p-4">
+        <div class="flex flex-col gap-y-8 p-4">
           <!-- hostname and boxes -->
           <div class="flex flex-col gap-y-4 border-l-4 border-gray-200 pl-4">
             <!-- current hostname -->
-            <div x-text="currentHostname" class="text-xl font-semibold"></div>
+            <div x-text="currentHostname" class="text-3xl font-semibold"></div>
             <!-- number boxes -->
             <div class="flex gap-x-4">
               <div
                 class="flex flex-col items-center rounded-md border border-gray-200 px-6 py-1"
               >
                 <span x-text="viewCount" class="font-semibold"></span>
-                <span class="text-sm">Total visits</span>
+                <span class="text-sm text-gray-600">Total visits</span>
               </div>
               <div
                 class="flex flex-col items-center rounded-md border border-gray-200 px-6 py-1"
               >
                 <span x-text="mostViewedPathnames[0]?.pathname" class="font-semibold"></span>
-                <span class="text-sm">Most visited path</span>
+                <span class="text-sm text-gray-600">Most visited path</span>
               </div>
             </div>
           </div>
@@ -217,7 +233,7 @@
             <div class="w-1/2 rounded-md border border-gray-200 shadow-md flex flex-col px-4 pb-4">
               <!-- chart card header -->
               <div class="flex items-center justify-between py-2">
-                <div class="font-semibold">Daily views</div>
+                <div class="font-semibold">Most viewed pathnames</div>
               </div>
               <div x-data="chart" :data-type="charts.mostViewedPathnames.type" :data-labels="charts.mostViewedPathnames.labels" :data-items="charts.mostViewedPathnames.items" :data-options="charts.mostViewedPathnames.options" class="h-60">
                 <canvas></canvas>
