@@ -222,23 +222,25 @@
           <!-- charts -->
           <div class="flex gap-x-4">
             <!-- chart card -->
-            <div class="w-1/2 rounded-md border border-gray-200 shadow-md flex flex-col px-4 pb-4">
-              <!-- chart card header -->
-              <div class="flex items-center justify-between py-2">
-                <div class="font-semibold">Daily views</div>
-              </div>
-              <div x-data="chart" :data-labels="charts.dailyViews.labels" :data-items="charts.dailyViews.items" :data-options="charts.dailyViews.options" class="h-60">
-                <canvas></canvas>
-              </div>
+            <div x-remote-component="/components/chart.html">
+              <template data-for-slot="title">
+                Daily views
+              </template>
+              <template data-for-slot="chart">
+                <div x-data="chart" :data-labels="charts.dailyViews.labels" :data-items="charts.dailyViews.items" :data-options="charts.dailyViews.options" class="h-60">
+                  <canvas></canvas>
+                </div>
+              </template>
             </div>
-            <div class="w-1/2 rounded-md border border-gray-200 shadow-md flex flex-col px-4 pb-4">
-              <!-- chart card header -->
-              <div class="flex items-center justify-between py-2">
-                <div class="font-semibold">Most viewed pathnames</div>
-              </div>
-              <div x-data="chart" :data-type="charts.mostViewedPathnames.type" :data-labels="charts.mostViewedPathnames.labels" :data-items="charts.mostViewedPathnames.items" :data-options="charts.mostViewedPathnames.options" class="h-60">
-                <canvas></canvas>
-              </div>
+            <div x-remote-component="/components/chart.html">
+              <template data-for-slot="title">
+                Most viewed pathnames
+              </template>
+              <template data-for-slot="chart">
+                <div x-data="chart" :data-type="charts.mostViewedPathnames.type" :data-labels="charts.mostViewedPathnames.labels" :data-items="charts.mostViewedPathnames.items" :data-options="charts.mostViewedPathnames.options" class="h-60">
+                  <canvas></canvas>
+                </div>
+              </template>
             </div>
           </div>
           <div>
