@@ -19,6 +19,14 @@ document.addEventListener("alpine:init", () => {
       Chart.defaults.plugins.legend.display = false
     }
 
+    let getDateRangeToday = () => {
+      const now = new Date();
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const todayEnd = new Date(todayStart);
+      todayEnd.setDate(todayEnd.getDate() + 1);
+      return [todayStart, todayEnd]
+    }
+
     const THIS_DAY = 1
     const THIS_WEEK = 2
     const THIS_MONTH = 3
@@ -26,8 +34,9 @@ document.addEventListener("alpine:init", () => {
 
     return {
       db: null,
-      projectId: "",
-      publicApiKey: "",
+      projectId: "qirhwtbdwduaftlaange",
+      publicApiKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFpcmh3dGJkd2R1YWZ0bGFhbmdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEyOTYzOTAsImV4cCI6MjA2Njg3MjM5MH0.UP9IWKPk9y3kZ8xCl0L6oAua4YZJxyjcy6ePRc1PgBk",
+      authData: null,
       viewData: [],
       uniqueHostnames: [],
       mostViewedPathnames: [],
@@ -43,7 +52,6 @@ document.addEventListener("alpine:init", () => {
           `https://${this.projectId}.supabase.co`,
           this.publicApiKey,
         );
-        this.signInUser("", "");
         this.getUniqueHostnames();
         Alpine.effect(async () => {
           if (!this.currentHostname) {
@@ -68,6 +76,7 @@ document.addEventListener("alpine:init", () => {
           email,
           password,
         });
+        this.authData = data
       },
       addDateRangeToQuery(query, column) {
         if (this.currentDateRange[0]) {
