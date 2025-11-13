@@ -52,6 +52,7 @@ document.addEventListener("alpine:init", () => {
           `https://${this.projectId}.supabase.co`,
           this.publicApiKey,
         );
+        this.signInUser("user@simple-analytics.com", "password")
         this.getUniqueHostnames();
         Alpine.effect(async () => {
           if (!this.currentHostname) {
